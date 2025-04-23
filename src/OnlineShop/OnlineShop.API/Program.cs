@@ -1,13 +1,18 @@
-using OnlineShop.API.Data;
-using Microsoft.EntityFrameworkCore;
+﻿using OnlineShop.API.Data;
+using OnlineShop.API.Data.Repository;
+using OnlineShop.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configure DbContext with connection string
+// DbContext
 builder.Services.AddDbContext<OnlineShopDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+
+// 🟢 Register Repository & Service here
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 // Add services to the container
 builder.Services.AddControllers();
@@ -16,7 +21,7 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline
+// Middleware setup
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

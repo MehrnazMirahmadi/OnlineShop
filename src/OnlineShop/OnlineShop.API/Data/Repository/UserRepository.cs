@@ -36,7 +36,11 @@
 
         public async Task<User> GetUserByNameAsync(string username)
         {
-            return await _context.Users.FirstOrDefaultAsync(u => u.FirstName == username); // یا هر فیلدی که منظورتونه
+            return await _context.Users
+                .FirstOrDefaultAsync(u =>
+                    EF.Functions.Like(u.FirstName, $"%{username}%") ||
+                    EF.Functions.Like(u.LastName, $"%{username}%"));
         }
+
     }
 }
