@@ -1,0 +1,6 @@
+@OnlineShop.API_HostAddress = http://localhost:5220
+
+GET {{OnlineShop.API_HostAddress}}/
+Accept: application/json
+
+###
