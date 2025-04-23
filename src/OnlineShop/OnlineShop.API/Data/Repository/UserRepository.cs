@@ -1,33 +1,42 @@
 ﻿namespace OnlineShop.API.Data.Repository
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository(OnlineShopDbContext _context) : IUserRepository
     {
-        public Task CreateUserAsync(User user)
+        public async Task<List<User>> GetAllUsersAsync()
         {
-            throw new NotImplementedException();
-        }
-        public Task UpdateUserAsync(User user)
-        {
-            throw new NotImplementedException();
+            return await _context.Users.ToListAsync();
         }
 
-        public Task DeleteUserAsync(int id)
+        public async Task CreateUserAsync(User user)
         {
-            throw new NotImplementedException();
-        }
-        public Task<User> GetUserByNameAsync(string username)
-        {
-            throw new NotImplementedException();
+            await _context.Users.AddAsync(user);
+            await _context.SaveChangesAsync();
         }
 
-        public Task<List<User>> GetAllUsersAsync()
+        public async Task UpdateUserAsync(User user)
         {
-            throw new NotImplementedException();
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
         }
 
-        public Task<User> GetUserByIdAsync(int id)
+        public async Task DeleteUserAsync(int id)
         {
-            throw new NotImplementedException();
+            var user = await _context.Users.FindAsync(id);
+            if (user != null)
+            {
+                _context.Users.Remove(user);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task<User> GetUserByIdAsync(int id)
+        {
+            return await _context.Users.FindAsync(id);
+        }
+
+        public async Task<User> GetUserByNameAsync(string username)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.FirstName == username); // یا هر فیلدی که منظورتونه
         }
     }
 }
