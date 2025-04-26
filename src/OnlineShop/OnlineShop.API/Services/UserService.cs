@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
+﻿using Mehrnaz.Extensions;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace OnlineShop.API.Services
 {
@@ -37,7 +38,8 @@ namespace OnlineShop.API.Services
             {
                 FirstName = userDTO.FirstName,
                 LastName = userDTO.LastName,
-                PhoneNumber = userDTO.PhoneNumber
+                PhoneNumber = userDTO.PhoneNumber,
+                Password = userDTO.Password.ToSha256(),
             };
 
             await _userRepository.CreateUserAsync(user, cancellationToken);
@@ -50,7 +52,8 @@ namespace OnlineShop.API.Services
 
             existingUser.FirstName = userDTO.FirstName;
             existingUser.LastName = userDTO.LastName;
-            existingUser.PhoneNumber = userDTO.PhoneNumber;
+            existingUser.PhoneNumber = userDTO.PhoneNumber;  // اصلاح ویرگول اضافی
+            existingUser.Password = userDTO.Password.ToSha256();
 
             await _userRepository.UpdateUserAsync(existingUser, cancellationToken);
         }
