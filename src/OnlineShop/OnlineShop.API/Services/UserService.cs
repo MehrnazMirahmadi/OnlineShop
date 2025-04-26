@@ -16,19 +16,20 @@ namespace OnlineShop.API.Services
             }).ToList();
         }
 
-        public async Task<UserDTO> GetUserByNameAsync(string username, CancellationToken cancellationToken)
+        public async Task<List<UserDTO>> GetUserByNameAsync(string username, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetUserByNameAsync(username, cancellationToken);
-            if (user == null) return null;
+            var users = await _userRepository.GetUsersByNameAsync(username, cancellationToken);
+            if (users == null || !users.Any()) return null; // بررسی اینکه آیا کاربری پیدا شده است یا نه
 
-            return new UserDTO
+            return users.Select(user => new UserDTO
             {
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 PhoneNumber = user.PhoneNumber,
                 FullName = $"{user.FirstName} {user.LastName}"
-            };
+            }).ToList();
         }
+
 
         public async Task CreateUserAsync(CreateUserDTO userDTO, CancellationToken cancellationToken)
         {

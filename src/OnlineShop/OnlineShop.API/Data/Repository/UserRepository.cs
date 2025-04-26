@@ -6,13 +6,13 @@
         {
             return await _dbContext.Users.ToListAsync(cancellationToken);
         }
-
-        public async Task<User> GetUserByNameAsync(string username, CancellationToken cancellationToken)
+        public async Task<List<User>> GetUsersByNameAsync(string username, CancellationToken cancellationToken)
         {
             return await _dbContext.Users
-                .FirstOrDefaultAsync(u =>
+                .Where(u =>
                     EF.Functions.Like(u.FirstName, $"%{username}%") ||
-                    EF.Functions.Like(u.LastName, $"%{username}%"), cancellationToken);
+                    EF.Functions.Like(u.LastName, $"%{username}%"))
+                .ToListAsync(cancellationToken);
         }
 
 

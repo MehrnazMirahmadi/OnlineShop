@@ -2,7 +2,8 @@
 {
     public interface IUserService
     {
-        Task<UserDTO> GetUserByNameAsync(string username, CancellationToken cancellationToken);
+
+        Task<List<UserDTO>> GetUserByNameAsync(string username, CancellationToken cancellationToken);
         Task<List<UserDTO>> GetAllUsersAsync(CancellationToken cancellationToken);
         Task CreateUserAsync(CreateUserDTO userDTO, CancellationToken cancellationToken);
         Task UpdateUserAsync(UpdateUserDTO userDTO, CancellationToken cancellationToken);
