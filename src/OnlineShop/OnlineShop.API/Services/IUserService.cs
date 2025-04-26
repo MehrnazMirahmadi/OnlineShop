@@ -7,5 +7,6 @@
         Task CreateUserAsync(CreateUserDTO userDTO, CancellationToken cancellationToken);
         Task UpdateUserAsync(UpdateUserDTO userDTO, CancellationToken cancellationToken);
         Task DeleteUserAsync(int id, CancellationToken cancellationToken);
+        Task<UserDTO> GetUserByIdAsync(int id, CancellationToken cancellationToken);
     }
 }

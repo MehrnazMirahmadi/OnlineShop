@@ -1,7 +1,6 @@
-﻿using OnlineShop.API.Data;
-using OnlineShop.API.Services;
+﻿var builder = WebApplication.CreateBuilder(args);
 
-var builder = WebApplication.CreateBuilder(args);
+// 🟢 Add services to the container
 
 // DbContext
 builder.Services.AddDbContext<OnlineShopDbContext>(options =>
@@ -9,18 +8,27 @@ builder.Services.AddDbContext<OnlineShopDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
-// 🟢 Register Repository & Service here
+// Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+// Services
 builder.Services.AddScoped<IUserService, UserService>();
 
-// Add services to the container
+// FluentValidation
+builder.Services.AddValidatorsFromAssemblyContaining<CreateUserValidator>();
+builder.Services.AddFluentValidationAutoValidation(); // ❗
+
+
+
+
+// Controllers + Swagger
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Middleware setup
+// 🛠 Middleware setup
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -28,9 +36,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();

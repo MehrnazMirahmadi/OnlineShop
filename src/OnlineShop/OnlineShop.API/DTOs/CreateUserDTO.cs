@@ -1,4 +1,6 @@
-﻿namespace OnlineShop.API.DTOs;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace OnlineShop.API.DTOs;
 
 public class CreateUserDTO
 {

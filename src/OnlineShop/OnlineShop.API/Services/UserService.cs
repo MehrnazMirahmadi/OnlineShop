@@ -1,4 +1,6 @@
-﻿namespace OnlineShop.API.Services
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+
+namespace OnlineShop.API.Services
 {
     public class UserService(IUserRepository _userRepository) : IUserService
     {
@@ -56,5 +58,22 @@
         {
             await _userRepository.DeleteUserAsync(id, cancellationToken);
         }
+
+        public async Task<UserDTO> GetUserByIdAsync(int id, CancellationToken cancellationToken)
+        {
+            var user = await _userRepository.GetUserByIdAsync(id, cancellationToken);
+
+            if (user is null)
+                return null;
+
+            return new UserDTO
+            {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                PhoneNumber = user.PhoneNumber,
+                FullName = $"{user.FirstName} {user.LastName}"
+            };
+        }
+
     }
 }

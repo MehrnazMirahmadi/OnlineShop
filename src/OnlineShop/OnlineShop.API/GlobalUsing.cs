@@ -6,3 +6,5 @@ global using OnlineShop.API.Repositories;
 global using OnlineShop.API.Data;
 global using Microsoft.AspNetCore.Mvc;
 global using OnlineShop.API.Services;
+global using FluentValidation;
+global using FluentValidation.AspNetCore;

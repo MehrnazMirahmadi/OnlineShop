@@ -22,6 +22,7 @@
                 .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
         }
 
+
         public async Task CreateUserAsync(User user, CancellationToken cancellationToken)
         {
             await _dbContext.Users.AddAsync(user, cancellationToken);
