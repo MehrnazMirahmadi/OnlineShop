@@ -1,13 +1,11 @@
-﻿using OnlineShop.API.DTOs;
-
-namespace OnlineShop.API.Services;
-
-public interface IUserService
+﻿namespace OnlineShop.API.Services
 {
-    Task<UserDTO> GetUserByNameAsync(string username);
-    Task<List<UserDTO>> GetAllUsersAsync();
-    Task CreateUserAsync(CreateUserDTO userDTO);
-    Task UpdateUserAsync(UpdateUserDTO userDTO);
-    Task DeleteUserAsync(int id);
+    public interface IUserService
+    {
+        Task<UserDTO> GetUserByNameAsync(string username, CancellationToken cancellationToken);
+        Task<List<UserDTO>> GetAllUsersAsync(CancellationToken cancellationToken);
+        Task CreateUserAsync(CreateUserDTO userDTO, CancellationToken cancellationToken);
+        Task UpdateUserAsync(UpdateUserDTO userDTO, CancellationToken cancellationToken);
+        Task DeleteUserAsync(int id, CancellationToken cancellationToken);
+    }
 }
-

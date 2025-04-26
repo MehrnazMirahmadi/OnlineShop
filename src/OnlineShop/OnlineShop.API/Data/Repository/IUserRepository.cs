@@ -1,14 +1,12 @@
-﻿namespace OnlineShop.API.Data.Repository;
-
-public interface IUserRepository
+﻿namespace OnlineShop.API.Repositories
 {
-    Task<User> GetUserByNameAsync(string username);
-    Task<User> GetUserByIdAsync(int id);
-    Task<List<User>> GetAllUsersAsync();
-    Task CreateUserAsync(User user);
-    Task UpdateUserAsync(User user);
-    Task DeleteUserAsync(int id);
-
-
+    public interface IUserRepository
+    {
+        Task<List<User>> GetAllUsersAsync(CancellationToken cancellationToken);
+        Task<User> GetUserByNameAsync(string username, CancellationToken cancellationToken);
+        Task<User> GetUserByIdAsync(int id, CancellationToken cancellationToken);
+        Task CreateUserAsync(User user, CancellationToken cancellationToken);
+        Task UpdateUserAsync(User user, CancellationToken cancellationToken);
+        Task DeleteUserAsync(int id, CancellationToken cancellationToken);
+    }
 }
-

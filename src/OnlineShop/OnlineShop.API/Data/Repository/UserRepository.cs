@@ -1,46 +1,47 @@
-﻿namespace OnlineShop.API.Data.Repository
+﻿namespace OnlineShop.API.Repositories
 {
-    public class UserRepository(OnlineShopDbContext _context) : IUserRepository
+    public class UserRepository(OnlineShopDbContext _dbContext) : IUserRepository
     {
-        public async Task<List<User>> GetAllUsersAsync()
+        public async Task<List<User>> GetAllUsersAsync(CancellationToken cancellationToken)
         {
-            return await _context.Users.ToListAsync();
+            return await _dbContext.Users.ToListAsync(cancellationToken);
         }
 
-        public async Task CreateUserAsync(User user)
+        public async Task<User> GetUserByNameAsync(string username, CancellationToken cancellationToken)
         {
-            await _context.Users.AddAsync(user);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task UpdateUserAsync(User user)
-        {
-            _context.Users.Update(user);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task DeleteUserAsync(int id)
-        {
-            var user = await _context.Users.FindAsync(id);
-            if (user != null)
-            {
-                _context.Users.Remove(user);
-                await _context.SaveChangesAsync();
-            }
-        }
-
-        public async Task<User> GetUserByIdAsync(int id)
-        {
-            return await _context.Users.FindAsync(id);
-        }
-
-        public async Task<User> GetUserByNameAsync(string username)
-        {
-            return await _context.Users
+            return await _dbContext.Users
                 .FirstOrDefaultAsync(u =>
                     EF.Functions.Like(u.FirstName, $"%{username}%") ||
-                    EF.Functions.Like(u.LastName, $"%{username}%"));
+                    EF.Functions.Like(u.LastName, $"%{username}%"), cancellationToken);
         }
 
+
+        public async Task<User> GetUserByIdAsync(int id, CancellationToken cancellationToken)
+        {
+            return await _dbContext.Users
+                .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+        }
+
+        public async Task CreateUserAsync(User user, CancellationToken cancellationToken)
+        {
+            await _dbContext.Users.AddAsync(user, cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task UpdateUserAsync(User user, CancellationToken cancellationToken)
+        {
+            _dbContext.Users.Update(user);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task DeleteUserAsync(int id, CancellationToken cancellationToken)
+        {
+            var user = await GetUserByIdAsync(id, cancellationToken);
+            if (user != null)
+            {
+                _dbContext.Users.Remove(user);
+                await _dbContext.SaveChangesAsync(cancellationToken);
+            }
+        }
     }
 }
