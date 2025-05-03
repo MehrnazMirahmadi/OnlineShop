@@ -5,13 +5,13 @@
 namespace OnlineShop.API.Migrations
 {
     /// <inheritdoc />
-    public partial class addpass : Migration
+    public partial class AddNationalCode : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-                name: "Password",
+                name: "NationalCode",
                 table: "Users",
                 type: "nvarchar(max)",
                 nullable: false,
@@ -22,7 +22,7 @@ namespace OnlineShop.API.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "Password",
+                name: "NationalCode",
                 table: "Users");
         }
     }

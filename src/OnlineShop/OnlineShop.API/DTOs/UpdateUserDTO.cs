@@ -7,5 +7,6 @@ public class UpdateUserDTO
     public required string LastName { get; set; }
     public required string Password { get; set; }
     public string PhoneNumber { get; set; }
+    public required string NationalCode { get; set; }
     public bool IsActive { get; set; }
 }

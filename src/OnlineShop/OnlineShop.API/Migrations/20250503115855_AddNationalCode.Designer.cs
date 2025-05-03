@@ -11,8 +11,8 @@ using OnlineShop.API.Data;
 namespace OnlineShop.API.Migrations
 {
     [DbContext(typeof(OnlineShopDbContext))]
-    [Migration("20250426104714_add-pass")]
-    partial class addpass
+    [Migration("20250503115855_AddNationalCode")]
+    partial class AddNationalCode
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -30,7 +30,7 @@ namespace OnlineShop.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 2L, 2);
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -44,6 +44,10 @@ namespace OnlineShop.API.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NationalCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Password")
                         .IsRequired()
