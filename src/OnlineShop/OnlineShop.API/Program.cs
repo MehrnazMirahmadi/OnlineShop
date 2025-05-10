@@ -1,4 +1,6 @@
-﻿using OnlineShop.API.Middleware;
+﻿using OnlineShop.API;
+using OnlineShop.API.Middleware;
+using OnlineShop.API.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,10 +17,9 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // Services
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ICityRepository,CityRepository>();
 
-// FluentValidation
-builder.Services.AddValidatorsFromAssemblyContaining<CreateUserValidator>();
-builder.Services.AddFluentValidationAutoValidation(); // ❗
+
 
 
 
@@ -42,4 +43,11 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 
+
+app.MapGet("/Cities", async (IUnitOfWork unitOfWork, CancellationToken cancellationToken) =>
+{
+    var entities = await unitOfWork.cityRepository.GetListCitiesAsync(cancellationToken);
+    return entities;
+})
+    .WithTags("City");
 app.Run();

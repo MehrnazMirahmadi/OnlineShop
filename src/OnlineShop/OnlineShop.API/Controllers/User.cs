@@ -4,12 +4,7 @@
     [ApiController]
     public class UserController(IUserService _userService) : ControllerBase
     {
-        [HttpGet]
-        public async Task<ActionResult<List<UserDTO>>> GetAllUsers(CancellationToken cancellationToken)
-        {
-            var users = await _userService.GetAllUsersAsync(cancellationToken);
-            return Ok(users);
-        }
+      
 
         [HttpGet("{username}")]
         public async Task<ActionResult<UserDTO>> GetUserByName(string username, CancellationToken cancellationToken)

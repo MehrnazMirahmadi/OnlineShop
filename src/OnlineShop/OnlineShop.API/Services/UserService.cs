@@ -1,48 +1,41 @@
 ﻿using Mehrnaz.Extensions;
 using Microsoft.Extensions.Caching.Memory;
 using OnlineShop.API.Exceptions;
+using OnlineShop.API.Repository;
 
 namespace OnlineShop.API.Services
 {
     public class UserService(IUserRepository _userRepository,IMemoryCache memoryCache) : IUserService
     {
       
-        public async Task<List<UserDTO>> GetAllUsersAsync(CancellationToken cancellationToken)
-        {
-            const string cacheKey = "AllUsers";
 
-            if (!memoryCache.TryGetValue(cacheKey, out List<UserDTO> cachedUsers))
-            {
-                var users = await _userRepository.GetAllUsersAsync(cancellationToken);
-
-                cachedUsers = users.Select(u => new UserDTO
-                {
-                    FirstName = u.FirstName,
-                    LastName = u.LastName,
-                    PhoneNumber = u.PhoneNumber,
-                    NationalCode = u.NationalCode,
-                    FullName = $"{u.FirstName} {u.LastName}"
-                }).ToList();
-
-                var cacheEntryOptions = new MemoryCacheEntryOptions()
-                    .SetSlidingExpiration(TimeSpan.FromMinutes(5));
-
-                memoryCache.Set(cacheKey, cachedUsers, cacheEntryOptions);
-            }
-
-            return cachedUsers;
-        }
         public async Task<List<UserDTO>> GetUserByNameAsync(string username, CancellationToken cancellationToken)
         {
-            var cacheKey = $"users_by_name_{username}";
+            var cacheKey = $"users_by_name_{username ?? "all"}";
 
             if (memoryCache.TryGetValue(cacheKey, out List<UserDTO> cachedUsers))
             {
                 return cachedUsers;
             }
 
-            var users = await _userRepository.GetUsersByNameAsync(username, cancellationToken);
-            if (users is null || !users.Any()) throw new UserNotFoundException($"کاربری با نام {username} پیدا نشد.");
+            List<User> users;
+
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                // username داده نشده، همه کاربران را بیاور
+                users = await _userRepository.GetAllUsersAsync(cancellationToken);
+            }
+            else
+            {
+                // جستجو بر اساس username
+                users = await _userRepository.GetUsersByNameAsync(username, cancellationToken);
+
+                if (users == null || users.Count == 0)
+                {
+                    // اگر کاربری با username پیدا نشد، همه را بیاور
+                    users = await _userRepository.GetAllUsersAsync(cancellationToken);
+                }
+            }
 
             var userDTOs = users.Select(user => new UserDTO
             {
