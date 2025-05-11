@@ -39,12 +39,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-app.UseMiddleware<RateLimitMiddleware>();
+
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 
-
+app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
+app.UseMiddleware<RateLimitMiddleware>();
 app.MapGet("/Cities", async (IUnitOfWork unitOfWork, CancellationToken cancellationToken) =>
 {
     var entities = await unitOfWork.cityRepository.GetListCitiesAsync(cancellationToken);
