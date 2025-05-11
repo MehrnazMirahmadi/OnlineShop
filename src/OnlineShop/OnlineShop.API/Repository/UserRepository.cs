@@ -1,4 +1,6 @@
-﻿namespace OnlineShop.API.Repository
+﻿using OnlineShop.API.Data;
+
+namespace OnlineShop.API.Repository
 {
     public class UserRepository(OnlineShopDbContext _dbContext) : IUserRepository
     {

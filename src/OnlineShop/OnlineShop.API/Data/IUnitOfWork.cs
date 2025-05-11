@@ -1,6 +1,6 @@
 ﻿using OnlineShop.API.Repository;
 
-namespace OnlineShop.API.DTOs;
+namespace OnlineShop.API.Data;
 
 public interface IUnitOfWork
 {

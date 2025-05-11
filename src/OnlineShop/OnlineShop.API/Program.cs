@@ -1,4 +1,4 @@
-﻿using OnlineShop.API;
+﻿using OnlineShop.API.Data;
 using OnlineShop.API.Middleware;
 using OnlineShop.API.Repository;
 
@@ -18,6 +18,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 // Services
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICityRepository,CityRepository>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 
 

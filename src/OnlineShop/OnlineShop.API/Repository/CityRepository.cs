@@ -1,10 +1,11 @@
-﻿
+﻿using OnlineShop.API.Data;
+
 namespace OnlineShop.API.Repository;
 
-public class CityRepository : ICityRepository
+public class CityRepository(OnlineShopDbContext _context) : ICityRepository
 {
-    public Task<List<City>> GetListCitiesAsync(CancellationToken cancellationToken)
+    public async Task<List<City>> GetListCitiesAsync(CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return await _context.Cities.ToListAsync(cancellationToken);
     }
 }
