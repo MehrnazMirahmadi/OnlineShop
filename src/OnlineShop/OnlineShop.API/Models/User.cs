@@ -1,26 +1,85 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using OnlineShop.API.Exceptions;
 
 namespace OnlineShop.API.Models;
 
 public class User
 {
-    public int Id { get; set; }
+    public int Id { get; private set; }
+    public string FirstName { get; private set; } = string.Empty;
+    public string LastName { get; private set; } = string.Empty;
+    public string NationalCode { get; private set; } = string.Empty;
+    public string PhoneNumber { get; private set; } = string.Empty;
+    public string Password { get; private set; } = string.Empty;
+    public bool IsActive { get; private set; }
+    private User(string firstName, string lastName, string nationalCode, string phoneNumber, string password)
+    {
+        SetFirstName(firstName);
+        SetLastName(lastName);
+        SetNationalCode(nationalCode);
+        SetPhoneNumber(phoneNumber);
+        SetPassword(password);
+        SetIsActive(true);
+    }
+    // متد ساخت شیء (Factory Method)
+    public static User Create(string firstName, string lastName, string nationalCode, string phoneNumber, string password)
+    {
+        return new User(firstName, lastName, nationalCode, phoneNumber, password);
+    }
 
+    // متد بروزرسانی اطلاعات کاربر
+    public void Update(string firstName, string lastName, string phoneNumber, string nationalCode, bool isActive)
+    {
+        SetFirstName(firstName);
+        SetLastName(lastName);
+        SetPhoneNumber(phoneNumber);
+        SetNationalCode(nationalCode);
+        SetIsActive(isActive);
+    }
 
-    public string FirstName { get; set; } = string.Empty;
+    // متد تغییر رمز عبور
+    public void ChangePassword(string newPassword)
+    {
+        SetPassword(newPassword);
+    }
 
-   
-    [RegularExpression(@"^\d{10}$", ErrorMessage = "کد ملی نامعتبر است.")]
-    public string NationalCode { get; set; } = string.Empty;
+    // متدهای اعتبارسنجی داخلی
+    private void SetFirstName(string firstName)
+    {
+        if (string.IsNullOrWhiteSpace(firstName))
+            throw new BadRequestException("نام نمی‌تواند خالی باشد.");
+        FirstName = firstName;
+    }
 
- 
-    public string LastName { get; set; } = string.Empty;
+    private void SetLastName(string lastName)
+    {
+        if (string.IsNullOrWhiteSpace(lastName))
+            throw new BadRequestException("نام خانوادگی نمی‌تواند خالی باشد.");
+        LastName = lastName;
+    }
 
-    public string Password { get; set; } = string.Empty;
+    private void SetNationalCode(string code)
+    {
+        if (!System.Text.RegularExpressions.Regex.IsMatch(code, @"^\d{10}$"))
+            throw new BadRequestException("کد ملی نامعتبر است.");
+        NationalCode = code;
+    }
 
- 
-    [RegularExpression(@"^(?:\+98|0098|0)?9\d{9}$", ErrorMessage = "شماره تلفن همراه نامعتبر است.")]
-    public string PhoneNumber { get; set; } = string.Empty;
+    private void SetPhoneNumber(string phone)
+    {
+        if (!System.Text.RegularExpressions.Regex.IsMatch(phone, @"^(?:\+98|0098|0)?9\d{9}$"))
+            throw new BadRequestException("شماره موبایل نامعتبر است.");
+        PhoneNumber = phone;
+    }
 
-    public bool IsActive { get; set; }
+    private void SetPassword(string password)
+    {
+        if (string.IsNullOrWhiteSpace(password) || password.Length < 6)
+            throw new BadRequestException("رمز عبور باید حداقل ۶ کاراکتر باشد.");
+        Password = password;
+    }
+
+    private void SetIsActive(bool isActive)
+    {
+        IsActive = isActive;
+    }
 }

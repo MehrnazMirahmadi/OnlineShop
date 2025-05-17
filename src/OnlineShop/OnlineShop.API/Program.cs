@@ -1,6 +1,7 @@
 ﻿using OnlineShop.API.Data;
 using OnlineShop.API.Middleware;
 using OnlineShop.API.Repository;
+using OnlineShop.Application.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
