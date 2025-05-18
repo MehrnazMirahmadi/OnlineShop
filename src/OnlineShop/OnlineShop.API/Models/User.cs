@@ -11,6 +11,7 @@ public class User
     public string PhoneNumber { get; private set; } = string.Empty;
     public string Password { get; private set; } = string.Empty;
     public bool IsActive { get; private set; }
+    public bool IsDelete { get; private set; }
     private User(string firstName, string lastName, string nationalCode, string phoneNumber, string password)
     {
         SetFirstName(firstName);
@@ -19,6 +20,8 @@ public class User
         SetPhoneNumber(phoneNumber);
         SetPassword(password);
         SetIsActive(true);
+        SetIsDeleted(false);
+
     }
     // متد ساخت شیء (Factory Method)
     public static User Create(string firstName, string lastName, string nationalCode, string phoneNumber, string password)
@@ -27,13 +30,14 @@ public class User
     }
 
     // متد بروزرسانی اطلاعات کاربر
-    public void Update(string firstName, string lastName, string phoneNumber, string nationalCode, bool isActive)
+    public void Update(string firstName, string lastName, string phoneNumber, string nationalCode, bool isActive,bool isDelete)
     {
         SetFirstName(firstName);
         SetLastName(lastName);
         SetPhoneNumber(phoneNumber);
         SetNationalCode(nationalCode);
         SetIsActive(isActive);
+        SetIsDeleted(isDelete);
     }
 
     // متد تغییر رمز عبور
@@ -81,5 +85,9 @@ public class User
     private void SetIsActive(bool isActive)
     {
         IsActive = isActive;
+    }
+    private void SetIsDeleted(bool isDelete)
+    {
+        IsDelete = isDelete;
     }
 }

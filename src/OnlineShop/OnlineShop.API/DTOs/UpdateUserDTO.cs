@@ -9,4 +9,5 @@ public class UpdateUserDTO
     public string PhoneNumber { get; set; }
     public required string NationalCode { get; set; }
     public bool IsActive { get; set; }
+    public bool IsDelete { get; set; }
 }

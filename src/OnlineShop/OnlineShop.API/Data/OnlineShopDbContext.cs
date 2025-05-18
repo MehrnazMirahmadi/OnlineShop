@@ -35,13 +35,13 @@ namespace OnlineShop.API.Data
                       .IsRequired()
                       .HasMaxLength(10)
                       .IsFixedLength();
-
+                entity.HasQueryFilter(x => !x.IsDelete);
                 entity.HasIndex(u => u.NationalCode).IsUnique();
 
                 entity.Property(u => u.Password)
                       .IsRequired()
                       .HasMaxLength(256);
-
+                
 
                 entity.Property(u => u.PhoneNumber)
                       .IsRequired()

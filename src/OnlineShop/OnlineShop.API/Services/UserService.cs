@@ -63,7 +63,8 @@ public class UserService(IUserRepository _userRepository, IMemoryCache memoryCac
             userDTO.LastName,
             userDTO.PhoneNumber,
             userDTO.NationalCode,
-            userDTO.IsActive
+            userDTO.IsActive,
+            userDTO.IsDelete
         );
 
         if (!string.IsNullOrWhiteSpace(userDTO.Password))
