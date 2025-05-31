@@ -18,6 +18,7 @@ public class UserRepository(OnlineShopDbContext _dbContext) : IUserRepository
                 EF.Functions.Like(u.LastName, $"%{username}%"))
             .ToListAsync(cancellationToken);
     }
+  
 
     public async Task<User> GetUserByIdAsync(int id, CancellationToken cancellationToken)
     {

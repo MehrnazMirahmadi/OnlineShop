@@ -99,4 +99,16 @@ public class UserService(IUserRepository _userRepository, IMemoryCache memoryCac
             FullName = $"{user.FirstName} {user.LastName}"
         };
     }
+
+
+
+    public async Task SoftDeleteUserAsync(int id, CancellationToken cancellationToken)
+    {
+        var user = await _userRepository.GetUserByIdAsync(id, cancellationToken);
+        if (user == null) return;
+
+        user.SoftDelete();
+
+        await _userRepository.UpdateUserAsync(user, cancellationToken);
+    }
 }

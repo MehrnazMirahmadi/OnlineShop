@@ -34,5 +34,12 @@
             await _userService.DeleteUserAsync(id, cancellationToken);
             return Ok(new { message = "User deleted successfully." });
         }
+        [HttpPatch("soft-delete/{id}")]
+        public async Task<IActionResult> SoftDeleteUser(int id, CancellationToken cancellationToken)
+        {
+            await _userService.SoftDeleteUserAsync(id, cancellationToken);
+            return Ok(new { message = "User soft deleted successfully." });
+        }
+
     }
 }

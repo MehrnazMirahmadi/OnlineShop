@@ -90,4 +90,8 @@ public class User
     {
         IsDelete = isDelete;
     }
+    public void SoftDelete()
+    {
+        IsDelete = true;
+    }
 }
