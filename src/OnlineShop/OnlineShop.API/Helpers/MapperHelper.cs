@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Humanizer;
 using OnlineShop.API.Features;
 using OnlineShop.API.ViewModel;
 
@@ -31,13 +32,13 @@ public static class MapperHelper
         return _mapper.Map<List<UserViewModel>>(entities);
     }
 
-    public static IEnumerable<EnumViewModel> ToViewModel<TEnum>(this IEnumerable<TEnum> enumValues) where TEnum : Enum
+    public static IEnumerable<EnumViewModel> ToViewModel(this IEnumerable<Enum> enumValues)
     {
         return enumValues.Select(enumValue => new EnumViewModel
         {
-            Id = Convert.ToInt32(enumValue),
-            Title = enumValue.ToString(),
-            Description = enumValue.ToString()
+            Value = (int)(object)enumValue,
+            Name = enumValue.ToString(),
+            Description = enumValue.Humanize()
         });
     }
 }

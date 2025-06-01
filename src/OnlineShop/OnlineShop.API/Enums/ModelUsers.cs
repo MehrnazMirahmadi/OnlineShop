@@ -5,7 +5,7 @@ namespace OnlineShop.API.Enums;
 
 
 [EnumEndpoint("TypeBs")]
-public enum ModelBType
+public enum ModelUsers
 {
     [Description("نوع اول")]
     Type1 = 1,

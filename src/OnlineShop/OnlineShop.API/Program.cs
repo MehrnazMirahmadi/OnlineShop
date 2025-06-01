@@ -1,9 +1,14 @@
 ﻿using MediatR;
+using Microsoft.OpenApi.Extensions;
+using OnlineShop.API.Attributes;
 using OnlineShop.API.Behaviours;
 using OnlineShop.API.Data;
+using OnlineShop.API.Features;
+using OnlineShop.API.Helpers;
 using OnlineShop.API.Middleware;
 using OnlineShop.API.Repository;
 using OnlineShop.Application.Services;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,10 +27,6 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICityRepository,CityRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-
-
-
-
 
 
 // Controllers + Swagger
@@ -61,5 +62,30 @@ app.MapGet("/Cities", async (IUnitOfWork unitOfWork, CancellationToken cancellat
     var entities = await unitOfWork.cityRepository.GetListCitiesAsync(cancellationToken);
     return entities;
 })
-    .WithTags("City");
+.WithTags("City");
+
+var enumTypes = typeof(Program).Assembly
+    .GetTypes()
+    .Where(t => t.IsEnum
+                && t.Namespace != null
+                && t.Namespace.Contains("Enums")
+                && t.GetCustomAttributes(typeof(EnumEndpointAttribute), false).Length != 0)
+    .ToList();
+
+foreach (var enumType in enumTypes)
+{
+    var attribute = (EnumEndpointAttribute)enumType.GetCustomAttribute(typeof(EnumEndpointAttribute))!;
+
+    app.MapGet($"/Enums/{attribute.Route}", () =>
+    {
+
+        var enumValues = Enum.GetValues(enumType).Cast<Enum>();
+  
+        var viewModel = enumValues.ToViewModel();
+
+        return BaseResult.Success();
+    }).WithTags("Enums");
+}
+
+
 app.Run();

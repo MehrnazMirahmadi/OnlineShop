@@ -1,16 +1,18 @@
 ﻿using Mehrnaz.Extensions;
 using Microsoft.Extensions.Caching.Memory;
+using OnlineShop.API.Helpers;
 using OnlineShop.API.Repository;
+using OnlineShop.API.ViewModel;
 
 namespace OnlineShop.Application.Services;
 
 public class UserService(IUserRepository _userRepository, IMemoryCache memoryCache) : IUserService
 {
-    public async Task<List<UserDTO>> GetUserByNameAsync(string username, CancellationToken cancellationToken)
+    public async Task<List<UserViewModel>> GetUserByNameAsync(string username, CancellationToken cancellationToken)
     {
         var cacheKey = $"users_by_name_{username ?? "all"}";
 
-        if (memoryCache.TryGetValue(cacheKey, out List<UserDTO> cachedUsers))
+        if (memoryCache.TryGetValue(cacheKey, out List<UserViewModel> cachedUsers))
         {
             return cachedUsers;
         }
@@ -31,12 +33,13 @@ public class UserService(IUserRepository _userRepository, IMemoryCache memoryCac
             }
         }
 
-        var userDTOs = users.Select(MapToDTO).ToList();
+        var userViewModels = users.ToViewModel();
 
-        memoryCache.Set(cacheKey, userDTOs, TimeSpan.FromMinutes(10));
+        memoryCache.Set(cacheKey, userViewModels, TimeSpan.FromMinutes(10));
 
-        return userDTOs;
+        return userViewModels;
     }
+
 
     public async Task CreateUserAsync(CreateUserDTO userDTO, CancellationToken cancellationToken)
     {
@@ -80,11 +83,11 @@ public class UserService(IUserRepository _userRepository, IMemoryCache memoryCac
         await _userRepository.DeleteUserAsync(id, cancellationToken);
     }
 
-    public async Task<UserDTO> GetUserByIdAsync(int id, CancellationToken cancellationToken)
+    public async Task<UserViewModel> GetUserByIdAsync(int id, CancellationToken cancellationToken)
     {
         var user = await _userRepository.GetUserByIdAsync(id, cancellationToken);
 
-        return user == null ? null : MapToDTO(user);
+        return user?.ToViewModel();
     }
 
     // --- Mapper Method ---
