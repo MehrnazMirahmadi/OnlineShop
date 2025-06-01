@@ -41,7 +41,7 @@ public class UserService(IUserRepository _userRepository, IMemoryCache memoryCac
     public async Task CreateUserAsync(CreateUserDTO userDTO, CancellationToken cancellationToken)
     {
         var hashedPassword = userDTO.Password.ToSha256();
-
+        
         var user = User.Create(
             userDTO.FirstName,
             userDTO.LastName,

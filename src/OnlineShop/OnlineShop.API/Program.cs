@@ -1,4 +1,6 @@
-﻿using OnlineShop.API.Data;
+﻿using MediatR;
+using OnlineShop.API.Behaviours;
+using OnlineShop.API.Data;
 using OnlineShop.API.Middleware;
 using OnlineShop.API.Repository;
 using OnlineShop.Application.Services;
@@ -31,6 +33,13 @@ builder.Services.AddControllers();
 builder.Services.AddMemoryCache();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddMediatR(options =>
+{
+    options.RegisterServicesFromAssembly(typeof(Program).Assembly);
+    options.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
+});
+builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
 
 var app = builder.Build();
 
