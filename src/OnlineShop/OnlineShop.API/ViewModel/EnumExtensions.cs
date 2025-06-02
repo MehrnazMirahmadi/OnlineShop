@@ -1,30 +1,27 @@
 ﻿using OnlineShop.API.Features;
 using System.ComponentModel;
 
-namespace OnlineShop.API.ViewModel;
-
-public static class EnumExtensions
+public static class EnumHelper
 {
-    public static IEnumerable<EnumViewModel> ToViewModel<TEnum>(this IEnumerable<TEnum> enumValues) where TEnum : Enum
+    public static List<EnumViewModel> ToList(Type enumType)
     {
-        return enumValues.Select(enumValue => new EnumViewModel
-        {
-            Value = Convert.ToInt32(enumValue),
-            Name = enumValue.ToString(),
-            Description = GetDescription(enumValue)
-        });
+        return Enum.GetValues(enumType)
+            .Cast<Enum>()
+            .Select(e => new EnumViewModel
+            {
+                Value = Convert.ToInt32(e),
+                Name = e.ToString(),
+                Description = GetEnumDescription(e)
+            }).ToList();
     }
 
-    private static string GetDescription<TEnum>(TEnum enumValue) where TEnum : Enum
+    public static string GetEnumDescription(Enum value)
     {
-        var field = typeof(TEnum).GetField(enumValue.ToString());
+        var field = value.GetType().GetField(value.ToString());
+        var attr = field?.GetCustomAttributes(typeof(DescriptionAttribute), false)
+                         .FirstOrDefault() as DescriptionAttribute;
 
-        var attribute = field?.GetCustomAttributes(typeof(DescriptionAttribute), false)
-                              .FirstOrDefault() as DescriptionAttribute;
-
-        return attribute?.Description ?? enumValue.ToString();
+        return attr?.Description ?? value.ToString();
     }
 }
-
-
 

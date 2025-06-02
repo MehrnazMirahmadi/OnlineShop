@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using Microsoft.OpenApi.Extensions;
 using OnlineShop.API.Attributes;
 using OnlineShop.API.Behaviours;
 using OnlineShop.API.Data;
@@ -7,6 +6,7 @@ using OnlineShop.API.Features;
 using OnlineShop.API.Helpers;
 using OnlineShop.API.Middleware;
 using OnlineShop.API.Repository;
+using OnlineShop.API.ViewModel;
 using OnlineShop.Application.Services;
 using System.Reflection;
 
@@ -25,7 +25,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // Services
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<ICityRepository,CityRepository>();
+builder.Services.AddScoped<ICityRepository, CityRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 
@@ -65,27 +65,33 @@ app.MapGet("/Cities", async (IUnitOfWork unitOfWork, CancellationToken cancellat
 .WithTags("City");
 
 var enumTypes = typeof(Program).Assembly
-    .GetTypes()
-    .Where(t => t.IsEnum
-                && t.Namespace != null
-                && t.Namespace.Contains("Enums")
-                && t.GetCustomAttributes(typeof(EnumEndpointAttribute), false).Length != 0)
-    .ToList();
+                      .GetTypes()
+                      .Where(t => t.IsEnum
+                             && t.Namespace != null
+                             && t.Namespace.Contains("OnlineShop.API.Enums")
+                             && t.GetCustomAttributes(typeof(EnumEndpointAttribute), false).Length != 0);
+//var enumTypes = Assembly.GetExecutingAssembly()
+//                        .GetTypes()
+//                        .Where(t => t.IsEnum)
+//                        .ToList();
+
 
 foreach (var enumType in enumTypes)
 {
-    var attribute = (EnumEndpointAttribute)enumType.GetCustomAttribute(typeof(EnumEndpointAttribute))!;
-
-    app.MapGet($"/Enums/{attribute.Route}", () =>
+    var route = $"{enumType.Name}";
+    var attribute = (enumType.GetCustomAttribute(typeof(EnumEndpointAttribute)) as EnumEndpointAttribute)!;
+    app.MapGet(attribute.Route, () =>
     {
-
         var enumValues = Enum.GetValues(enumType).Cast<Enum>();
-  
         var viewModel = enumValues.ToViewModel();
-
-        return BaseResult.Success();
+        var response = new EnumResponse<EnumViewModel>
+        {
+            Color = attribute.Color, 
+            Values = viewModel
+        };
+        return Results.Ok(response);
     }).WithTags("Enums");
-}
 
+}
 
 app.Run();

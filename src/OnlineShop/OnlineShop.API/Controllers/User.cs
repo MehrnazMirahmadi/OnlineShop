@@ -2,13 +2,19 @@
 using OnlineShop.API.Commands.Users.Create;
 using OnlineShop.API.Commands.Users.Delete;
 using OnlineShop.API.Commands.Users.Update;
+using OnlineShop.API.Enums;
 using OnlineShop.API.Features;
 using OnlineShop.API.Queries.User.GetByName;
+using OnlineShop.API.ViewModel;
+using System.Reflection;
+//using static OnlineShop.API.ViewModel.EnumExtensions;
 
 namespace OnlineShop.API.Controllers
 {
+
     [Route("api/Users")]
     [ApiController]
+
     public class UserController(IMediator _mediator) : ControllerBase
     {
 

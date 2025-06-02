@@ -4,7 +4,7 @@ using System.ComponentModel;
 namespace OnlineShop.API.Enums;
 
 
-[EnumEndpoint("TypeBs")]
+[EnumEndpoint("TypeBs","#3399FF")]
 public enum ModelUsers
 {
     [Description("نوع اول")]
