@@ -1,13 +1,17 @@
 ﻿using MediatR;
+using Microsoft.Extensions.Options;
+using OnlineShop.API;
 using OnlineShop.API.Attributes;
 using OnlineShop.API.Behaviours;
 using OnlineShop.API.Data;
 using OnlineShop.API.Features;
 using OnlineShop.API.Helpers;
 using OnlineShop.API.Middleware;
+using OnlineShop.API.Proxies;
 using OnlineShop.API.Repository;
 using OnlineShop.API.ViewModel;
 using OnlineShop.Application.Services;
+using Polly;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,6 +31,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICityRepository, CityRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<ITrackingCodeProxy, TrackingCodeProxy>();
 
 
 // Controllers + Swagger
@@ -41,7 +46,23 @@ builder.Services.AddMediatR(options =>
     options.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
 });
 builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
+builder.Services.Configure<Settings>(builder.Configuration.GetSection("Settings"));
 
+builder.Services.AddHttpClient<ITrackingCodeProxy, TrackingCodeProxy>((serviceProvider, client) =>
+{
+    var options = serviceProvider.GetRequiredService<IOptions<Settings>>();
+    client.BaseAddress = new Uri(options.Value.TrackingCode.BaseURL);
+})
+.AddPolicyHandler(Policy<HttpResponseMessage>
+    .Handle<HttpRequestException>()
+    .OrResult(r => !r.IsSuccessStatusCode)
+    .WaitAndRetryAsync(
+        retryCount: 3,
+        sleepDurationProvider: attempt => TimeSpan.FromSeconds(2 * attempt),
+        onRetry: (response, delay, retryCount, context) =>
+        {
+            Console.WriteLine($"Retry {retryCount} after {delay.TotalSeconds}s due to {response.Exception?.Message ?? response.Result?.StatusCode.ToString()}");
+        }));
 var app = builder.Build();
 
 // 🛠 Middleware setup

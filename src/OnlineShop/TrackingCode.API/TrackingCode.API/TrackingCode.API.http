@@ -1,0 +1,6 @@
+@TrackingCode.API_HostAddress = http://localhost:5056
+
+GET {{TrackingCode.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
