@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using Mapster;
+using MediatR;
 using Microsoft.Extensions.Options;
 using OnlineShop.API;
 using OnlineShop.API.Attributes;
@@ -33,6 +34,8 @@ builder.Services.AddScoped<ICityRepository, CityRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<ITrackingCodeProxy, TrackingCodeProxy>();
 
+TypeAdapterConfig<User, UserViewModel>.NewConfig()
+    .Map(dest => dest.FullName, src => $"{src.FirstName} {src.LastName}");
 
 // Controllers + Swagger
 builder.Services.AddControllers();

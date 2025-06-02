@@ -1,4 +1,6 @@
-﻿using Mehrnaz.Extensions;
+﻿using AutoMapper;
+using Mapster;
+using Mehrnaz.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using OnlineShop.API.Helpers;
@@ -12,6 +14,7 @@ public class UserService
     (IUserRepository _userRepository
     , IMemoryCache memoryCache
     , ITrackingCodeProxy trackingCodeProxy
+    , IMapper _mapper
     ) 
     : IUserService
 {
@@ -42,7 +45,10 @@ public class UserService
             }
         }
 
-        var userViewModels = users.ToViewModel();
+        //var userViewModels = users.ToViewModel();
+        var userViewModels = users.Adapt<List<UserViewModel>>(); // Mapster 
+
+
 
         memoryCache.Set(cacheKey, userViewModels, TimeSpan.FromMinutes(10));
 
@@ -97,21 +103,10 @@ public class UserService
     {
         var user = await _userRepository.GetUserByIdAsync(id, cancellationToken);
 
-        return user?.ToViewModel();
+        return user == null ? null : _mapper.Map<UserViewModel>(user); //  AutoMapper
     }
 
-    // --- Mapper Method ---
-    private static UserDTO MapToDTO(User user)
-    {
-        return new UserDTO
-        {
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            PhoneNumber = user.PhoneNumber,
-            NationalCode = user.NationalCode,
-            FullName = $"{user.FirstName} {user.LastName}"
-        };
-    }
+  
 
 
 
