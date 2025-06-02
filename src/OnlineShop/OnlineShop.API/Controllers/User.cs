@@ -41,18 +41,21 @@ namespace OnlineShop.API.Controllers
             return Ok(BaseResult.Success());
         }
 
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeleteUser(int id, CancellationToken cancellationToken)
-        //{
-        //    await _userService.DeleteUserAsync(id, cancellationToken);
-        //    return Ok(new { message = "User deleted successfully." });
-        //}
+        /*  [HttpDelete("{id}")]
+          public async Task<IActionResult> DeleteUser(int id, CancellationToken cancellationToken)
+          {
+              await _userService.DeleteUserAsync(id, cancellationToken);
+              return Ok(new { message = "User deleted successfully." });
+          }
+       */
         [HttpPatch("soft-delete/{id}")]
         public async Task<IActionResult> SoftDeleteUser(int id, CancellationToken cancellationToken)
         {
-            await _mediator.Send(new DeleteCommandUser(id), cancellationToken);
+             await _mediator.Send(new DeleteCommandUser(id), cancellationToken);
             return Ok(BaseResult.Success("Entity has been deleted"));
+
         }
+
 
     }
 }

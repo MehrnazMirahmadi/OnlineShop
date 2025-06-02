@@ -46,4 +46,14 @@ public class UserRepository(OnlineShopDbContext _dbContext) : IUserRepository
             await _dbContext.SaveChangesAsync(cancellationToken);
         }
     }
+    public async Task SoftDeleteUserAsync(int id, CancellationToken cancellationToken)
+    {
+        var user = await GetUserByIdAsync(id, cancellationToken);
+        if (user == null) return;
+
+        _dbContext.Entry(user).Property("IsDeleted").CurrentValue = true;
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
+    }
+
 }

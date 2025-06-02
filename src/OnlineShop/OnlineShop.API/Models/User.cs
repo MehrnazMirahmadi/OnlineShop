@@ -11,7 +11,7 @@ public class User
     public string PhoneNumber { get; private set; } = string.Empty;
     public string Password { get; private set; } = string.Empty;
     public bool IsActive { get; private set; }
-    public bool IsDelete { get; private set; }
+   // public bool IsDelete { get; private set; }
     public string TrackingCode { get; private set; } = string.Empty;
 
     private User(string firstName, string lastName, string nationalCode, string phoneNumber, string password, string trackingCode)
@@ -22,7 +22,7 @@ public class User
         SetPhoneNumber(phoneNumber);
         SetPassword(password);
         SetIsActive(true);
-        SetIsDeleted(false);
+       // SetIsDeleted(false);
         SetTrackingCode(trackingCode);
 
     }
@@ -40,7 +40,7 @@ public class User
         SetPhoneNumber(phoneNumber);
         SetNationalCode(nationalCode);
         SetIsActive(isActive);
-        SetIsDeleted(isDelete);
+        //SetIsDeleted(isDelete);
        
     }
 
@@ -90,14 +90,14 @@ public class User
     {
         IsActive = isActive;
     }
-    private void SetIsDeleted(bool isDelete)
+   /* private void SetIsDeleted(bool isDelete)
     {
         IsDelete = isDelete;
     }
     public void SoftDelete()
     {
         IsDelete = true;
-    }
+    }*/
     private void SetTrackingCode(string trackingCode)
     {
         TrackingCode = trackingCode;

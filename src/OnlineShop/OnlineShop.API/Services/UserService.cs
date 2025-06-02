@@ -1,4 +1,5 @@
 ﻿using Mehrnaz.Extensions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using OnlineShop.API.Helpers;
 using OnlineShop.API.Proxies;
@@ -116,11 +117,13 @@ public class UserService
 
     public async Task SoftDeleteUserAsync(int id, CancellationToken cancellationToken)
     {
-        var user = await _userRepository.GetUserByIdAsync(id, cancellationToken);
+       /* var user = await _userRepository.GetUserByIdAsync(id, cancellationToken);
         if (user == null) return;
 
-        user.SoftDelete();
+         user.SoftDelete();
+        
+        await _userRepository.UpdateUserAsync(user, cancellationToken);*/
 
-        await _userRepository.UpdateUserAsync(user, cancellationToken);
+             await _userRepository.SoftDeleteUserAsync(id, cancellationToken);
     }
 }

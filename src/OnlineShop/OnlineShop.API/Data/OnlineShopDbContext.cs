@@ -35,7 +35,9 @@ namespace OnlineShop.API.Data
                       .IsRequired()
                       .HasMaxLength(10)
                       .IsFixedLength();
-                entity.HasQueryFilter(x => !x.IsDelete);
+                //entity.HasQueryFilter(x => !x.IsDelete);
+                entity.Property<bool>("IsDeleted");
+                entity.HasQueryFilter(u => EF.Property<bool>(u, "IsDeleted") == false);
                 entity.HasIndex(u => u.NationalCode).IsUnique();
 
                 entity.Property(u => u.Password)

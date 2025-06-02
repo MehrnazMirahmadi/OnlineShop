@@ -8,5 +8,6 @@
         Task CreateUserAsync(User user, CancellationToken cancellationToken);
         Task UpdateUserAsync(User user, CancellationToken cancellationToken);
         Task DeleteUserAsync(int id, CancellationToken cancellationToken);
+        Task SoftDeleteUserAsync(int id, CancellationToken cancellationToken);
     }
 }
