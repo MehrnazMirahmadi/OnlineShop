@@ -1,15 +1,23 @@
 ﻿using Mehrnaz.Extensions;
 using Microsoft.Extensions.Caching.Memory;
 using OnlineShop.API.Helpers;
+using OnlineShop.API.Proxies;
 using OnlineShop.API.Repository;
 using OnlineShop.API.ViewModel;
 
 namespace OnlineShop.Application.Services;
 
-public class UserService(IUserRepository _userRepository, IMemoryCache memoryCache) : IUserService
+public class UserService
+    (IUserRepository _userRepository
+    , IMemoryCache memoryCache
+    , ITrackingCodeProxy trackingCodeProxy
+    ) 
+    : IUserService
 {
     public async Task<List<UserViewModel>> GetUserByNameAsync(string username, CancellationToken cancellationToken)
     {
+       
+
         var cacheKey = $"users_by_name_{username ?? "all"}";
 
         if (memoryCache.TryGetValue(cacheKey, out List<UserViewModel> cachedUsers))
@@ -44,13 +52,14 @@ public class UserService(IUserRepository _userRepository, IMemoryCache memoryCac
     public async Task CreateUserAsync(CreateUserDTO userDTO, CancellationToken cancellationToken)
     {
         var hashedPassword = userDTO.Password.ToSha256();
-        
+        var trackingCode = await trackingCodeProxy.Get(cancellationToken);
         var user = User.Create(
             userDTO.FirstName,
             userDTO.LastName,
             userDTO.NationalCode,
             userDTO.PhoneNumber,
-            hashedPassword
+            hashedPassword,
+            trackingCode
         );
 
         await _userRepository.CreateUserAsync(user, cancellationToken);

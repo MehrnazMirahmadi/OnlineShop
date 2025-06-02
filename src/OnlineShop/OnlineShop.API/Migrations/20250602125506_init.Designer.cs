@@ -11,7 +11,7 @@ using OnlineShop.API.Data;
 namespace OnlineShop.API.Migrations
 {
     [DbContext(typeof(OnlineShopDbContext))]
-    [Migration("20250511080230_init")]
+    [Migration("20250602125506_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -84,6 +84,9 @@ namespace OnlineShop.API.Migrations
                         .HasColumnType("nvarchar(10)")
                         .HasDefaultValue("TrueTrue");
 
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -104,6 +107,10 @@ namespace OnlineShop.API.Migrations
                         .IsRequired()
                         .HasMaxLength(15)
                         .HasColumnType("nvarchar(15)");
+
+                    b.Property<string>("TrackingCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

@@ -12,7 +12,9 @@ public class User
     public string Password { get; private set; } = string.Empty;
     public bool IsActive { get; private set; }
     public bool IsDelete { get; private set; }
-    private User(string firstName, string lastName, string nationalCode, string phoneNumber, string password)
+    public string TrackingCode { get; private set; } = string.Empty;
+
+    private User(string firstName, string lastName, string nationalCode, string phoneNumber, string password, string trackingCode)
     {
         SetFirstName(firstName);
         SetLastName(lastName);
@@ -21,12 +23,13 @@ public class User
         SetPassword(password);
         SetIsActive(true);
         SetIsDeleted(false);
+        SetTrackingCode(trackingCode);
 
     }
     // متد ساخت شیء (Factory Method)
-    public static User Create(string firstName, string lastName, string nationalCode, string phoneNumber, string password)
+    public static User Create(string firstName, string lastName, string nationalCode, string phoneNumber, string password, string trackingCode)
     {
-        return new User(firstName, lastName, nationalCode, phoneNumber, password);
+        return new User(firstName, lastName, nationalCode, phoneNumber, password,trackingCode);
     }
 
     // متد بروزرسانی اطلاعات کاربر
@@ -38,6 +41,7 @@ public class User
         SetNationalCode(nationalCode);
         SetIsActive(isActive);
         SetIsDeleted(isDelete);
+       
     }
 
     // متد تغییر رمز عبور
@@ -93,5 +97,9 @@ public class User
     public void SoftDelete()
     {
         IsDelete = true;
+    }
+    private void SetTrackingCode(string trackingCode)
+    {
+        TrackingCode = trackingCode;
     }
 }
