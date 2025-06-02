@@ -17,15 +17,38 @@ namespace OnlineShop.API.Controllers
 
     public class UserController(IMediator _mediator) : ControllerBase
     {
-
-
-        [HttpGet("{username}")]
-        public async Task<ActionResult<List<UserDTO>>> GetUserByName(string username, CancellationToken cancellationToken)
+        [HttpGet("filter")]
+        public async Task<IActionResult> GetUsersByFilter(
+    [FromQuery] string? firstName,
+    [FromQuery] string? lastName,
+    [FromQuery] string? nationalCode,
+    [FromQuery] OrderType? orderType,
+    [FromQuery] int pageSize = 10,
+    [FromQuery] int pageNumber = 1,
+    CancellationToken cancellationToken = default)
         {
-            var query = new GetUserByNameQuery(username);
-            var users = await _mediator.Send(query, cancellationToken);
-            return Ok(BaseResult.Success(users));
+            var query = new GetUserByNameQuery
+            {
+                FirstName = firstName,
+                LastName = lastName,
+                NationalCode = nationalCode,
+                OrderType = orderType,
+                PageSize = pageSize,
+                PageNumber = pageNumber
+            };
+
+            var result = await _mediator.Send(query, cancellationToken);
+            return Ok(BaseResult.Success(result));
         }
+
+
+        //[HttpGet("{username}")]
+        //public async Task<ActionResult<List<UserDTO>>> GetUserByName(string username, CancellationToken cancellationToken)
+        //{
+        //    var query = new GetUserByNameQuery(username);
+        //    var users = await _mediator.Send(query, cancellationToken);
+        //    return Ok(BaseResult.Success(users));
+        //}
 
         [HttpPost]
         public async Task<IActionResult> CreateUser([FromBody] CreateUserDTO dto, CancellationToken cancellationToken)

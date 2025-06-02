@@ -49,6 +49,7 @@ builder.Services.AddMediatR(options =>
     options.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
 });
 builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.Configure<Settings>(builder.Configuration.GetSection("Settings"));
 
 builder.Services.AddHttpClient<ITrackingCodeProxy, TrackingCodeProxy>((serviceProvider, client) =>

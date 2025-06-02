@@ -3,9 +3,11 @@ using Mapster;
 using Mehrnaz.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using OnlineShop.API.Features;
 using OnlineShop.API.Helpers;
 using OnlineShop.API.Proxies;
 using OnlineShop.API.Repository;
+using OnlineShop.API.Specification;
 using OnlineShop.API.ViewModel;
 
 namespace OnlineShop.Application.Services;
@@ -18,42 +20,26 @@ public class UserService
     ) 
     : IUserService
 {
-    public async Task<List<UserViewModel>> GetUserByNameAsync(string username, CancellationToken cancellationToken)
+    public async Task<PaginationResult<UserViewModel>> GetUsersByFilterAsync(
+      string? firstName,
+      string? lastName,
+      string? nationalCode,
+      OrderType? orderType,
+      int pageSize,
+      int pageNumber,
+      CancellationToken cancellationToken)
     {
-       
+        var spec = new GetUsersByFilterSpecification(firstName, lastName, nationalCode, orderType, pageSize, pageNumber);
 
-        var cacheKey = $"users_by_name_{username ?? "all"}";
+        var users = await _userRepository.ListAsync(spec, cancellationToken);
+        var totalCount = await _userRepository.CountAsync(spec.Criteria, cancellationToken);
 
-        if (memoryCache.TryGetValue(cacheKey, out List<UserViewModel> cachedUsers))
-        {
-            return cachedUsers;
-        }
+        var userViewModels = users.Adapt<List<UserViewModel>>();
 
-        List<User> users;
-
-        if (string.IsNullOrWhiteSpace(username))
-        {
-            users = await _userRepository.GetAllUsersAsync(cancellationToken);
-        }
-        else
-        {
-            users = await _userRepository.GetUsersByNameAsync(username, cancellationToken);
-
-            if (users == null || users.Count == 0)
-            {
-                users = await _userRepository.GetAllUsersAsync(cancellationToken);
-            }
-        }
-
-        //var userViewModels = users.ToViewModel();
-        var userViewModels = users.Adapt<List<UserViewModel>>(); // Mapster 
-
-
-
-        memoryCache.Set(cacheKey, userViewModels, TimeSpan.FromMinutes(10));
-
-        return userViewModels;
+        return PaginationResult<UserViewModel>.Create(pageSize, pageNumber, totalCount, userViewModels);
     }
+
+
 
 
     public async Task CreateUserAsync(CreateUserDTO userDTO, CancellationToken cancellationToken)

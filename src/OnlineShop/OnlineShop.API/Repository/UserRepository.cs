@@ -1,5 +1,8 @@
 ﻿using OnlineShop.API.Data;
+using OnlineShop.API.Features;
 using OnlineShop.API.Repository;
+using System.Linq;
+using System.Linq.Expressions;
 
 public class UserRepository(OnlineShopDbContext _dbContext) : IUserRepository
 {
@@ -54,6 +57,33 @@ public class UserRepository(OnlineShopDbContext _dbContext) : IUserRepository
         _dbContext.Entry(user).Property("IsDeleted").CurrentValue = true;
 
         await _dbContext.SaveChangesAsync(cancellationToken);
+    }
+    public async Task<List<User>> ListAsync(BaseSpecification<User> spec, CancellationToken cancellationToken)
+    {
+        IQueryable<User> query = _dbContext.Users.AsQueryable();
+
+        if (spec.Criteria != null)
+            query = query.Where(spec.Criteria);
+
+        if (spec.OrderByExpression != null)
+            query = query.OrderBy(spec.OrderByExpression);
+        else if (spec.OrderByDescendingExpression != null)
+            query = query.OrderByDescending(spec.OrderByDescendingExpression);
+
+        if (spec.IsPaginationEnabled)
+            query = query.Skip(spec.Skip).Take(spec.Take);
+
+        return await query.ToListAsync(cancellationToken);
+    }
+
+    public async Task<int> CountAsync(Expression<Func<User, bool>>? criteria, CancellationToken cancellationToken)
+    {
+        IQueryable<User> query = _dbContext.Users.AsQueryable();
+
+        if (criteria != null)
+            query = query.Where(criteria);
+
+        return await query.CountAsync(cancellationToken);
     }
 
 }

@@ -1,4 +1,7 @@
-﻿namespace OnlineShop.API.Repository
+﻿using OnlineShop.API.Features;
+using System.Linq.Expressions;
+
+namespace OnlineShop.API.Repository
 {
     public interface IUserRepository
     {
@@ -9,5 +12,8 @@
         Task UpdateUserAsync(User user, CancellationToken cancellationToken);
         Task DeleteUserAsync(int id, CancellationToken cancellationToken);
         Task SoftDeleteUserAsync(int id, CancellationToken cancellationToken);
+        Task<List<User>> ListAsync(BaseSpecification<User> spec, CancellationToken cancellationToken);
+        Task<int> CountAsync(Expression<Func<User, bool>>? criteria, CancellationToken cancellationToken);
+
     }
 }
