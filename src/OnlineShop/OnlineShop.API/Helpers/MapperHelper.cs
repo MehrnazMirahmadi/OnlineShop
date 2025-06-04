@@ -32,13 +32,13 @@ public static class MapperHelper
         return _mapper.Map<List<UserViewModel>>(entities);
     }
 
-    public static IEnumerable<EnumViewModel> ToViewModel(this IEnumerable<Enum> enumValues)
-    {
-        return enumValues.Select(enumValue => new EnumViewModel
-        {
-            Value = (int)(object)enumValue,
-            Name = enumValue.ToString(),
-            Description = enumValue.Humanize()
-        });
-    }
+    //public static IEnumerable<EnumViewModel> ToViewModel(this IEnumerable<Enum> enumValues)
+    //{
+    //    return enumValues.Select(enumValue => new EnumViewModel
+    //    {
+    //        Value = (int)(object)enumValue,
+    //        Name = enumValue.ToString(),
+    //        Description = enumValue.Humanize()
+    //    });
+    //}
 }

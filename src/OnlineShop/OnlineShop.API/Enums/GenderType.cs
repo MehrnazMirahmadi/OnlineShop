@@ -1,15 +1,19 @@
 ﻿using OnlineShop.API.Attributes;
-using System.ComponentModel;
 
 namespace OnlineShop.API.Enums;
+
 [EnumEndpoint("Genders", "#FF5733")]
 public enum GenderType
 {
-    [Description("مرد")]
+    [Info("fa", "مرد")]
+    [Info("color", "#2196F3")]
     Male = 1,
-    [Description("ٌزن")]
-    Female = 2,
-    [Description("سایر")]
-    Other =3,
 
+    [Info("fa", "زن")]
+    [Info("color", "#E91E63")]
+    Female = 2,
+
+    [Info("fa", "سایر")]
+    [Info("color", "#9E9E9E")]
+    Other = 3,
 }
