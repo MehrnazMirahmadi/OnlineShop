@@ -52,7 +52,7 @@ builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.Configure<Settings>(builder.Configuration.GetSection("Settings"));
 
-builder.Services.AddHttpClient<ITrackingCodeProxy, TrackingCodeProxy>((serviceProvider, client) =>
+/*builder.Services.AddHttpClient<ITrackingCodeProxy, TrackingCodeProxy>((serviceProvider, client) =>
 {
     var options = serviceProvider.GetRequiredService<IOptions<Settings>>();
     client.BaseAddress = new Uri(options.Value.TrackingCode.BaseURL);
@@ -66,7 +66,27 @@ builder.Services.AddHttpClient<ITrackingCodeProxy, TrackingCodeProxy>((servicePr
         onRetry: (response, delay, retryCount, context) =>
         {
             Console.WriteLine($"Retry {retryCount} after {delay.TotalSeconds}s due to {response.Exception?.Message ?? response.Result?.StatusCode.ToString()}");
-        }));
+        })); */
+
+/***************Polly Policies for HttpClient****************/
+
+var retryPolicy = Policy<HttpResponseMessage>
+    .Handle<HttpRequestException>()
+    .WaitAndRetryAsync(3, attempt => TimeSpan.FromSeconds(2));
+
+var circuitBreakerPolicy = Policy<HttpResponseMessage>
+    .Handle<HttpRequestException>()
+    .CircuitBreakerAsync(2, TimeSpan.FromSeconds(30));
+
+var timeoutPolicy = Policy.TimeoutAsync<HttpResponseMessage>(10);
+
+builder.Services.AddHttpClient<ITrackingCodeProxy, TrackingCodeProxy>((serviceProvider, client) =>
+{
+    var options = serviceProvider.GetRequiredService<IOptions<Settings>>();
+    client.BaseAddress = new Uri(options.Value.TrackingCode.BaseURL);
+})
+.AddPolicyHandler(Policy.WrapAsync(retryPolicy, circuitBreakerPolicy, timeoutPolicy));
+/*******************************/
 var app = builder.Build();
 
 // 🛠 Middleware setup
